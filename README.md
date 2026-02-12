@@ -1,12 +1,47 @@
-# Formal Languages & Finite Automata - Laboratory Work 1
+# Laboratory Work 1: Intro to Formal Languages. Regular Grammars. Finite Automata
 
-## 📋 Variant 9
+**Author:** Cretu Dumitru  
+**Course:** Formal Languages & Finite Automata  
+**Variant:** 9  
+**Date:** February 11, 2026
+**Student:** Bulimar Rodion
+**Group:** FAF-242
 
-**Grammar Definition:**
-- VN = {S, B, D, Q}
-- VT = {a, b, c, d}
-- Start Symbol = S
-- Productions:
+---
+
+## 1. Introduction
+
+A formal language is a set of strings formed from an alphabet, governed by specific rules. The main components are:
+
+- **Alphabet (VT)** - finite set of valid symbols
+- **Non-terminals (VN)** - variables that can be replaced
+- **Terminals (VT)** - symbols that appear in final strings
+- **Productions (P)** - rules for replacing non-terminals
+- **Start Symbol (S)** - initial non-terminal
+
+This laboratory work focuses on regular grammars (Type-3) and finite automata.
+
+---
+
+## 2. Objectives
+
+1. Implement a Grammar class for variant 9
+2. Generate 5 valid strings from the grammar
+3. Convert the grammar to an equivalent Finite Automaton
+4. Implement a method to check if a string belongs to the language
+5. Document the work in README.md and REPORT.md
+
+---
+
+## 3. Implementation
+
+### 3.1 Grammar Definition (Variant 9)
+
+VN = {S, B, D, Q}
+VT = {a, b, c, d}
+S = S
+
+P = {
 S → aB
 S → bB
 B → cD
@@ -14,138 +49,174 @@ D → dQ
 Q → bB
 D → a
 Q → dQ
+}
 
 
-## 📁 Project Structure
-```bash
-formal-languages-lab/
-├── main.py # Main program entry point
-├── grammar.py # Grammar class implementation
-├── finite_automaton.py # Finite Automaton class implementation
-├── models.py # Production data model
-├── README.md # Project documentation (this file)
-└── REPORT.md # Academic laboratory report
-```
+### 3.2 String Generation
+
+The algorithm uses leftmost derivation:
+1. Start with start symbol 'S'
+2. Find the leftmost non-terminal
+3. Randomly select a production for that non-terminal
+4. Replace the non-terminal with the right side
+5. Repeat until no non-terminals remain
+
+**Example derivation for "acd":**
+
+S → aB → acD → acd
 
 
-## How to Run
+### 3.3 Grammar to Finite Automaton Conversion
 
-```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/formal-languages-lab
-cd formal-languages-lab
+Each production is converted to a transition:
 
-# Run the program
-python main.py
-```
+| Production | Transition |
+|-----------|------------|
+| S → aB | δ(S, a) = B |
+| S → bB | δ(S, b) = B |
+| B → cD | δ(B, c) = D |
+| D → dQ | δ(D, d) = Q |
+| Q → bB | δ(Q, b) = B |
+| D → a | δ(D, a) = F |
+| Q → dQ | δ(Q, d) = Q |
 
-## Features
-- Grammar representation with non-terminals, terminals, and production rules
+**Resulting Automaton:**
+- States: Q = {S, B, D, Q, F}
+- Alphabet: Σ = {a, b, c, d}
+- Initial state: q0 = S
+- Final states: F = {F}
 
-- Random valid string generation using leftmost derivation
+### 3.4 String Validation
 
-- Grammar to Finite Automaton conversion
+The automaton simulation tracks all possible current states:
+1. Start with {S}
+2. For each character, follow all possible transitions
+3. If any current state is final after processing all characters, the string is accepted
 
-- String validation using NFA simulation
+---
 
-- Determinism check for automaton
+## 4. Results
 
-- No external dependencies - uses only Python standard library
+### 4.1 Generated Strings
 
-## Example Output
-``` bash
-Generated 5 valid strings:
-1: acd
-2: bdQ
-3: a
-4: acdQ
-5: bcda
+Running the program produced these 5 valid strings:
 
-Finite Automaton:
-States: {'F', 'S', 'B', 'D', 'Q'}
-Alphabet: {'a', 'b', 'c', 'd'}
-Initial State: S
-Final States: {'F'}
-Transitions:
-  δ(S, a) = B
-  δ(S, b) = B
-  δ(B, c) = D
-  δ(D, d) = Q
-  δ(D, a) = F
-  δ(Q, b) = B
-  δ(Q, d) = Q
-```
+1. `acd`
+2. `bdQ`
+3. `a`
+4. `acdQ`
+5. `bcda`
 
-## Test Results
+Additional strings generated for testing:
+- `bcdQ`
+- `acddQ`
 
-Valid Strings (Accepted):
-```bash
-acd     → S → aB → acD → acd
-bdQ     → S → bB → bcD → bdQ
-a       → S → aB → acD → a
-acdQ    → S → aB → acD → acdQ
-bcda    → S → bB → bcD → bcdQ → bcda
-bcdQ    → S → bB → bcD → bcdQ
-acddQ   → S → aB → acD → acdQ → acddQ
-```
+### 4.2 Validation Results
 
-Invalid Strings (Rejected):
-```bash
-""      (empty string)
-abc     (no transition from B with 'b')
-bac     (no transition from B with 'a')
-ccc     (must start with S)
-dddd    (must start with S)
-acb     (no transition from D with 'b')
-b       (B is not a final state)
-c       (no transition from S with 'c')
-d       (no transition from S with 'd')
-```
+**Valid Strings (Accepted):**
 
-## Requirements
+| String | Result |
+|--------|--------|
+| `acd` | ✓ ACCEPTED |
+| `bdQ` | ✓ ACCEPTED |
+| `a` | ✓ ACCEPTED |
+| `acdQ` | ✓ ACCEPTED |
+| `bcda` | ✓ ACCEPTED |
+| `bcdQ` | ✓ ACCEPTED |
+| `acddQ` | ✓ ACCEPTED |
 
-```bash
-Python 3.6 or higher
-No external libraries required
+**Invalid Strings (Rejected):**
 
-## Usage Examples
+| String | Reason | Result |
+|--------|--------|--------|
+| `""` (empty) | No transition from initial state | ✗ REJECTED |
+| `abc` | No transition from B with 'b' | ✗ REJECTED |
+| `bac` | No transition from B with 'a' | ✗ REJECTED |
+| `ccc` | Must start with S | ✗ REJECTED |
+| `dddd` | Must start with S | ✗ REJECTED |
+| `acb` | No transition from D with 'b' | ✗ REJECTED |
+| `b` | B is not a final state | ✗ REJECTED |
 
-from grammar import Grammar
-from finite_automaton import FiniteAutomaton
+### 4.3 Grammar Analysis
 
-# Create grammar
-grammar = Grammar()
+| Property | Value |
+|----------|-------|
+| Grammar Type | Type-3 (Regular) |
+| Production Form | Right-linear |
+| Total Productions | 7 |
+| Language | Infinite (due to Q → dQ) |
+| ε-productions | None |
 
-# Generate a valid string
-string = grammar.generate_string()
-print(f"Generated: {string}")
+### 4.4 Automaton Analysis
 
-# Convert to Finite Automaton
-fa = grammar.to_finite_automaton()
+| Property | Value |
+|----------|-------|
+| Number of States | 5 |
+| Number of Transitions | 7 |
+| Deterministic | Yes |
+| Initial State | S |
+| Final States | {F} |
 
-# Check if string is valid
-result = fa.string_belongs_to_language("acd")
-print(f"Is 'acd' valid? {result}")  # True
-```
+---
 
-## Class Overview
+## 5. Conclusions
 
-Grammar Class:
-__init__()	- Initializes grammar with variant 9 rules
-generate_string()	- Generates one random valid string
-generate_valid_strings(n)	- Generates n valid strings
-to_finite_automaton()	- Converts grammar to FA
+### 5.1 Summary of Achievements
 
-FiniteAutomaton Class:
-string_belongs_to_language(s) -	Checks if string s is accepted
-is_deterministic()	- Checks if automaton is DFA
-display()	- Prints automaton configuration
+| Task | Status |
+|------|--------|
+| Grammar Class Implementation | ✅ Complete |
+| Generate 5 Valid Strings | ✅ Complete |
+| Grammar → FA Conversion | ✅ Complete |
+| String Validation Method | ✅ Complete |
+| Documentation | ✅ Complete |
 
-##  Objectives Achieved
+### 5.2 Key Findings
 
-- Implement Grammar class for variant 9
-- Generate 5 valid strings from the language
-- Convert Grammar to Finite Automaton
-- Implement string validation method
-- Document with README.md and REPORT.md
-- Push to GitHub repository
+1. **The grammar is Type-3 (Regular)** - All productions follow the right-linear form A → aB or A → a.
+
+2. **The automaton is Deterministic** - No state has multiple transitions on the same input symbol.
+
+3. **The language is Infinite** - The production Q → dQ creates a cycle, allowing strings of arbitrary length.
+
+4. **Pattern** - All valid strings must start with 'a' or 'b', have 'c' as the second character, then either end with 'a' or continue with 'd's.
+
+### 5.3 Lessons Learned
+
+- Regular grammars are simple but can describe infinite languages
+- Leftmost derivation provides a systematic way to generate strings
+- NFA simulation using sets of states is straightforward to implement
+- Testing edge cases (empty string, invalid symbols) is important
+- Grammar and finite automata are equivalent representations
+
+### 5.4 Future Improvements
+
+- Add DFA minimization
+- Generate regular expression from automaton
+- Visualize automaton as a graph
+- Support for context-free grammars
+
+---
+
+## 6. References
+
+1. Drumea, V. & Cojuhari, I. (2026). "Formal Languages & Finite Automata". Technical University of Moldova.
+
+2. Hopcroft, J. E., Motwani, R., & Ullman, J. D. (2006). *Introduction to Automata Theory, Languages, and Computation* (3rd ed.). Addison-Wesley.
+
+3. Sipser, M. (2012). *Introduction to the Theory of Computation* (3rd ed.). Cengage Learning.
+
+---
+
+## 7. Declaration
+
+I hereby declare that this laboratory work is my own original work and has been completed in accordance with the academic integrity policy of the Technical University of Moldova.
+
+**Student:** Bulimar Rodion  
+**Group:** FAF-242  
+**Date:** February 11, 2026  
+**Signature:** ________________
+
+---
+
+*End of Report*
