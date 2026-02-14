@@ -118,8 +118,8 @@ I hereby declare that this laboratory work is my own original work and has been 
 **Student:** Bulimar Rodion  
 **Group:** FAF-242  
 **Date:** February 11, 2026  
-**Signature:** ________________
 
 ---
 
 *End of Report*
+
