@@ -11,67 +11,40 @@
 
 ## 1. Introduction
 
-A formal language is a set of strings formed from an alphabet, governed by specific rules. The main components are:
-
-- **Alphabet (VT)** - finite set of valid symbols
-- **Non-terminals (VN)** - variables that can be replaced
-- **Terminals (VT)** - symbols that appear in final strings
-- **Productions (P)** - rules for replacing non-terminals
-- **Start Symbol (S)** - initial non-terminal
-
-This laboratory work focuses on regular grammars (Type-3) and finite automata.
+A formal language is a set of strings formed from an alphabet, governed by specific rules. The main components include an alphabet of valid symbols, variables that can be replaced, symbols that appear in final strings, rules for replacing non-terminals, and an initial non-terminal. This laboratory work focuses on regular grammars, known as Type-3 grammars, and their corresponding finite automata.
 
 ---
 
 ## 2. Objectives
 
-1. Implement a Grammar class for variant 9
-2. Generate 5 valid strings from the grammar
-3. Convert the grammar to an equivalent Finite Automaton
-4. Implement a method to check if a string belongs to the language
-5. Document the work in README.md and REPORT.md
+The primary objectives of this laboratory work include implementing a Grammar class for variant 9, generating five valid strings from the grammar, converting the grammar to an equivalent Finite Automaton, implementing a method to verify whether a string belongs to the language, and documenting the work in both README.md and REPORT.md files.
 
 ---
 
 ## 3. Implementation
 
-### 3.1 Grammar Definition (Variant 9)
+### 3.1 Grammar Definition for Variant 9
 
-VN = {S, B, D, Q}
-VT = {a, b, c, d}
-S = S
+The grammar for variant 9 is defined with non-terminals VN = {S, B, D, Q} and terminals VT = {a, b, c, d}. The start symbol is S, and the production rules are as follows:
 
-P = {
-S → aB
-S → bB
-B → cD
-D → dQ
-Q → bB
-D → a
+S → aB  
+S → bB  
+B → cD  
+D → dQ  
+Q → bB  
+D → a  
 Q → dQ
-}
 
+### 3.2 String Generation Process
 
-### 3.2 String Generation
-
-The algorithm uses leftmost derivation:
-1. Start with start symbol 'S'
-2. Find the leftmost non-terminal
-3. Randomly select a production for that non-terminal
-4. Replace the non-terminal with the right side
-5. Repeat until no non-terminals remain
-
-**Example derivation for "acd":**
-
-S → aB → acD → acd
-
+The algorithm for string generation employs leftmost derivation. Starting with the start symbol S, the leftmost non-terminal is identified, and a random production for that non-terminal is selected. The non-terminal is then replaced with the right side of the chosen production, and this process repeats until no non-terminals remain. An example derivation for the string "acd" proceeds as S → aB → acD → acd.
 
 ### 3.3 Grammar to Finite Automaton Conversion
 
-Each production is converted to a transition:
+Each production in the grammar is converted to a corresponding transition in the finite automaton. The production S → aB becomes δ(S, a) = B, S → bB becomes δ(S, b) = B, B → cD becomes δ(B, c) = D, D → dQ becomes δ(D, d) = Q, Q → bB becomes δ(Q, b) = B, D → a becomes δ(D, a) = F, and Q → dQ becomes δ(Q, d) = Q. The resulting automaton consists of states Q = {S, B, D, Q, F} with an alphabet Σ = {a, b, c, d}. The initial state is q0 = S, and the final states are F = {F}.
 
 | Production | Transition |
-|-----------|------------|
+|------------|------------|
 | S → aB | δ(S, a) = B |
 | S → bB | δ(S, b) = B |
 | B → cD | δ(B, c) = D |
@@ -80,18 +53,9 @@ Each production is converted to a transition:
 | D → a | δ(D, a) = F |
 | Q → dQ | δ(Q, d) = Q |
 
-**Resulting Automaton:**
-- States: Q = {S, B, D, Q, F}
-- Alphabet: Σ = {a, b, c, d}
-- Initial state: q0 = S
-- Final states: F = {F}
+### 3.4 String Validation Method
 
-### 3.4 String Validation
-
-The automaton simulation tracks all possible current states:
-1. Start with {S}
-2. For each character, follow all possible transitions
-3. If any current state is final after processing all characters, the string is accepted
+The automaton simulation tracks all possible current states throughout the validation process. Beginning with the set containing the initial state S, each character in the input string is processed by following all possible transitions from the current set of states. After processing all characters, the string is accepted if any of the current states is a final state.
 
 ---
 
@@ -99,63 +63,21 @@ The automaton simulation tracks all possible current states:
 
 ### 4.1 Generated Strings
 
-Running the program produced these 5 valid strings:
-
-1. `acd`
-2. `bdQ`
-3. `a`
-4. `acdQ`
-5. `bcda`
-
-Additional strings generated for testing:
-- `bcdQ`
-- `acddQ`
+Running the program produced five valid strings: acd, bdQ, a, acdQ, and bcda. Additional strings generated for testing included bcdQ and acddQ.
 
 ### 4.2 Validation Results
 
-**Valid Strings (Accepted):**
+The validation results show that several strings are accepted by the automaton. The string acd was accepted, bdQ was accepted, a was accepted, acdQ was accepted, bcda was accepted, bcdQ was accepted, and acddQ was accepted.
 
-| String | Result |
-|--------|--------|
-| `acd` | ✓ ACCEPTED |
-| `bdQ` | ✓ ACCEPTED |
-| `a` | ✓ ACCEPTED |
-| `acdQ` | ✓ ACCEPTED |
-| `bcda` | ✓ ACCEPTED |
-| `bcdQ` | ✓ ACCEPTED |
-| `acddQ` | ✓ ACCEPTED |
-
-**Invalid Strings (Rejected):**
-
-| String | Reason | Result |
-|--------|--------|--------|
-| `""` (empty) | No transition from initial state | ✗ REJECTED |
-| `abc` | No transition from B with 'b' | ✗ REJECTED |
-| `bac` | No transition from B with 'a' | ✗ REJECTED |
-| `ccc` | Must start with S | ✗ REJECTED |
-| `dddd` | Must start with S | ✗ REJECTED |
-| `acb` | No transition from D with 'b' | ✗ REJECTED |
-| `b` | B is not a final state | ✗ REJECTED |
+Several strings were rejected for various reasons. The empty string was rejected because there is no transition from the initial state. The string abc was rejected because there is no transition from B with the symbol b. The string bac was rejected because there is no transition from B with the symbol a. The string ccc was rejected because valid strings must start with S. The string dddd was rejected for the same reason. The string acb was rejected because there is no transition from D with the symbol b. The string b was rejected because B is not a final state.
 
 ### 4.3 Grammar Analysis
 
-| Property | Value |
-|----------|-------|
-| Grammar Type | Type-3 (Regular) |
-| Production Form | Right-linear |
-| Total Productions | 7 |
-| Language | Infinite (due to Q → dQ) |
-| ε-productions | None |
+The grammar is classified as Type-3, or regular, with all productions following the right-linear form. There are seven total productions, and the language generated is infinite due to the production Q → dQ. The grammar contains no epsilon productions.
 
 ### 4.4 Automaton Analysis
 
-| Property | Value |
-|----------|-------|
-| Number of States | 5 |
-| Number of Transitions | 7 |
-| Deterministic | Yes |
-| Initial State | S |
-| Final States | {F} |
+The automaton consists of five states and seven transitions. It is deterministic, meaning no state has multiple transitions on the same input symbol. The initial state is S, and the only final state is F.
 
 ---
 
@@ -163,48 +85,29 @@ Additional strings generated for testing:
 
 ### 5.1 Summary of Achievements
 
-| Task | Status |
-|------|--------|
-| Grammar Class Implementation | ✅ Complete |
-| Generate 5 Valid Strings | ✅ Complete |
-| Grammar → FA Conversion | ✅ Complete |
-| String Validation Method | ✅ Complete |
-| Documentation | ✅ Complete |
+All tasks for this laboratory work were completed successfully. The Grammar class was implemented, five valid strings were generated, the grammar was converted to a finite automaton, the string validation method was implemented, and the documentation was completed.
 
 ### 5.2 Key Findings
 
-1. **The grammar is Type-3 (Regular)** - All productions follow the right-linear form A → aB or A → a.
-
-2. **The automaton is Deterministic** - No state has multiple transitions on the same input symbol.
-
-3. **The language is Infinite** - The production Q → dQ creates a cycle, allowing strings of arbitrary length.
-
-4. **Pattern** - All valid strings must start with 'a' or 'b', have 'c' as the second character, then either end with 'a' or continue with 'd's.
+The grammar is Type-3 and regular, as all productions follow the right-linear form A → aB or A → a. The automaton is deterministic with no conflicting transitions. The language generated is infinite because the production Q → dQ creates a cycle, allowing strings of arbitrary length. All valid strings must start with either a or b, have c as the second character, and then either end with a or continue with a sequence of d symbols.
 
 ### 5.3 Lessons Learned
 
-- Regular grammars are simple but can describe infinite languages
-- Leftmost derivation provides a systematic way to generate strings
-- NFA simulation using sets of states is straightforward to implement
-- Testing edge cases (empty string, invalid symbols) is important
-- Grammar and finite automata are equivalent representations
+Regular grammars, despite their simplicity, can describe infinite languages. Leftmost derivation provides a systematic approach to string generation. Simulating an NFA using sets of states is straightforward to implement. Testing edge cases, including the empty string and invalid symbols, is essential for robust validation. The equivalence between grammars and finite automata demonstrates that these two representations capture the same class of languages.
 
 ### 5.4 Future Improvements
 
-- Add DFA minimization
-- Generate regular expression from automaton
-- Visualize automaton as a graph
-- Support for context-free grammars
+Possible improvements for future work include adding DFA minimization, generating regular expressions from the automaton, visualizing the automaton as a graph, and extending support to context-free grammars.
 
 ---
 
 ## 6. References
 
-1. Drumea, V. & Cojuhari, I. (2026). "Formal Languages & Finite Automata". Technical University of Moldova.
+Drumea, V. and Cojuhari, I. Formal Languages and Finite Automata. Technical University of Moldova, 2026.
 
-2. Hopcroft, J. E., Motwani, R., & Ullman, J. D. (2006). *Introduction to Automata Theory, Languages, and Computation* (3rd ed.). Addison-Wesley.
+Hopcroft, J. E., Motwani, R., and Ullman, J. D. Introduction to Automata Theory, Languages, and Computation. 3rd ed., Addison-Wesley, 2006.
 
-3. Sipser, M. (2012). *Introduction to the Theory of Computation* (3rd ed.). Cengage Learning.
+Sipser, M. Introduction to the Theory of Computation. 3rd ed., Cengage Learning, 2012.
 
 ---
 
